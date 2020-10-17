@@ -9,12 +9,13 @@ const connection = mysql.createConnection({
     database: 'tracker'
 })
 
+
 function mainMenu() {
     inquirer.prompt([{
             name: 'mainMenu',
             type: 'list',
             message: "Please select an option: ",
-            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add an employee', 'Update an employee role']
+            choices: ['View all departments', 'View all roles', 'View all employees', 'Add a department', 'Add an employee', 'Update an employee role', 'Exit']
         }])
         .then(response => {
             switch (response.mainMenu) {
@@ -36,47 +37,68 @@ function mainMenu() {
                 case 'Update an employee role':
                     updateEmployee();
                     break;
+                case 'Exit':
+                    connection.end();
+                    break;
             }
         })
 
 }
 
 function viewDepartments() {
-    console.log('\nDepartments');
-
-    // connection.promise().query('SELECT * FROM department')
-    //     .then((result) => {
-    //         console.table(result);
-    //     })
-
     connection.query('SELECT * FROM department', (error, result) => {
         if (error) throw error;
-        console.table(result);
-    })
 
-    mainMenu();
+        console.log('\nDepartments');
+        console.table(result);
+
+        mainMenu();
+    })
 }
 
 function viewRoles() {
-    console.log('\nRoles');
-
     connection.query('SELECT * FROM role', (error, result) => {
         if (error) throw error;
-        console.table(result);
-    })
 
-    mainMenu();
+        console.log('\nRoles');
+        console.table(result);
+
+        mainMenu();
+    })
 }
 
 function viewEmployees() {
-    console.log('\nEmployees');
-
     connection.query('SELECT * FROM employee', (error, result) => {
         if (error) throw error;
-        console.table(result);
-    })
 
-    mainMenu();
+        console.log('\nEmployees');
+        console.table(result);
+
+        mainMenu();
+    })
+}
+
+function addDepartment() {
+    inquirer.prompt([{
+            name: 'name',
+            type: 'input',
+            message: 'Enter the department name: '
+        }])
+        .then(response => {
+            connection.query("INSERT INTO department(id, name) VALUES (?,?)", [10, response.name], (error, result) => {
+                if (error) throw error;
+            })
+
+            viewDepartments();
+        })
+}
+
+function addEmployee() {
+
+}
+
+function updateEmployee() {
+
 }
 
 
@@ -84,7 +106,7 @@ connection.connect(err => {
     if (err) throw err;
 
     console.log('connected as id ' + connection.threadId + '\n');
-    console.log('Welcome to Employee Tracker!' + '\n');
+    console.log('WELCOME TO EMPLOYEE TRACKER!' + '\n');
 
     mainMenu();
 })
