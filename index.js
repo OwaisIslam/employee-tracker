@@ -104,7 +104,15 @@ function addRole() {
             {
                 name: 'salary',
                 type: 'number',
-                message: 'Enter the salary: '
+                message: 'Enter the salary: ',
+                validate: salary => {
+                    if (salary) {
+                        return true;
+                    } else {
+                        console.log('Please enter a number!');
+                        return false;
+                    }
+                }
             },
             {
                 name: 'department',
@@ -206,14 +214,21 @@ function addEmployee() {
 
 function updateEmployee() {
     inquirer.prompt([{
-            name: 'employee',
-            type: 'list',
-            message: 'Select the employee:',
-            choices: getEmployees()
-        }])
+                name: 'employee',
+                type: 'number',
+                message: 'Enter the employee ID of the employee you wish to update:'
+            },
+            {
+                name: 'role',
+                type: 'number',
+                message: 'Enter the role ID you wish to update the employee to:'
+            }
+        ])
         .then(response => {
-            connection.query('SELECT * FROM employee', (error, result) => {
+            connection.query('UPDATE employee SET role_id = ? WHERE id = ? ', [response.role, response.employee], (error, result) => {
                 if (error) throw error;
+
+                viewEmployees();
             })
         })
 }
