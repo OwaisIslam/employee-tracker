@@ -128,7 +128,6 @@ function addRole() {
 
                 if (error) throw error;
                 result.forEach(id => {
-                    console.log(id.id);
                     responseID = id.id;
                 })
 
